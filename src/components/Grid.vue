@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { CSSProperties, defineComponent } from "vue";
 export default defineComponent({
   name: "Grid",
   data() {
@@ -35,8 +35,8 @@ export default defineComponent({
   },
 
   computed: {
-    gridStyle() {
-      const columns: number = this.pixels[0].length;
+    gridStyle(): object {
+      const columns = this.pixels[0].length;
       return {
         display: "grid",
         "justify-content": "center",

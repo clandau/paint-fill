@@ -1,7 +1,7 @@
 <template>
   <h1>{{ msg }}</h1>
 
-  <p>
+  <!-- <p>
     Recommended IDE setup:
     <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
     +
@@ -15,7 +15,7 @@
     <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
     (if using
     <code>&lt;script setup&gt;</code>)
-  </p>
+  </p> -->
 
   <p>See <code>README.md</code> for more information.</p>
 
@@ -28,10 +28,7 @@
   </p>
 
   <button @click="count++">count is: {{ count }}</button>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
-  </p>
+  <p></p>
 </template>
 
 <script lang="ts">
