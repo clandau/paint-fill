@@ -1,19 +1,20 @@
 <template>
   <div class="container">
-      <h1>{{ msg }}</h1>
-      <button @click="resetGrid">Reset Grid</button>
+    <h1>{{ msg }}</h1>
+    <p>Click a box and be AMAZED at the color changes!</p>
+    <button class="button" @click="resetGrid">Reset Grid</button>
+  </div>
+  <div class="grid" :style="gridStyle">
+    <div v-for="(pixelCol, i) in pixels" :key="i">
+      <div
+        v-for="(pixel, j) in pixelCol"
+        :key="j"
+        :class="'box box' + pixel"
+        :id="`${i}-${j}`"
+        v-on:click="handleColorChange"
+      ></div>
     </div>
-    <div class="grid" :style="gridStyle">
-      <div v-for="(pixelCol, i) in pixels" :key="i">
-        <div
-          v-for="(pixel, j) in pixelCol"
-          :key="j"
-          :class="'box box' + pixel"
-          :id="`${i}-${j}`"
-          v-on:click="handleColorChange"
-        ></div>
-      </div>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -44,6 +45,7 @@ export default defineComponent({
         [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
         [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
         [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
+        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ],
       pixelSize: "30px",
@@ -116,6 +118,7 @@ export default defineComponent({
         [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
         [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
+        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ];
     },
   },
@@ -130,7 +133,7 @@ export default defineComponent({
   height: 30px;
   border-style: solid;
   border-width: 1px;
-  border-color: navy;
+  border-color: #2c3e50;
 }
 .box0 {
   background-color: aquamarine;
@@ -143,5 +146,17 @@ export default defineComponent({
 }
 .box3 {
   background-color: plum;
+}
+.button {
+  padding: 6px 25px;
+  font-size: 16px;
+  background-color: white;
+  color: black;
+  border: 1px solid #2c3e50;
+}
+
+.button:hover {
+  background-color: #2c3e50;
+  color: white;
 }
 </style>
