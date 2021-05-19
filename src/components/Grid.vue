@@ -6,7 +6,7 @@
           v-for="(pixel, j) in pixelCol"
           :key="pixel"
           :class="'box box' + pixel"
-          :id="`${j}-${i}`"
+          :id="`${i}-${j}`"
           v-on:click="handleColorChange"
         ></div>
       </div>
@@ -15,7 +15,8 @@
 </template>
 
 <script lang="ts">
-import { CSSProperties, defineComponent } from "vue";
+import { defineComponent } from "vue";
+
 export default defineComponent({
   name: "Grid",
   data() {
@@ -41,7 +42,7 @@ export default defineComponent({
         display: "grid",
         "justify-content": "center",
         "align-content": "center",
-        "grid-template-columns": `repeat(${columns}, ${this.pixelSize}`,
+        "grid-template-columns": `repeat(${columns}, ${this.pixelSize})`,
       };
     },
   },
@@ -51,11 +52,46 @@ export default defineComponent({
       const target = e.target as HTMLTextAreaElement;
       console.log(target.id);
       const [x, y] = target.id.split("-").map(i => parseInt(i));
-      this.paintFill(x, y, 2)
+      console.log(x,y)
+      // copy of pixels array
+      // const pixelsCopy: number[][] = this.pixels.map(a => {
+      //   return a.slice();
+      // })
+      // console.log(pixelsCopy)
+      // this.pixels = this.paintFill(pixelsCopy, x, y, 3);
+      this.paintFill(x, y, 3);
     },
 
+    // paintFill(grid: number[][], x: number, y: number, newColor: number) {
+    //   const currentVal = grid[x][y];
+    //   // set currentVal to newColor
+    //   grid[x][y] = newColor;
+
+    //   // check top, bottom, left and right
+    //   // if they match currentVal, call function with that val's coordinates
+    //   // top
+    //   if (x - 1 >= 0 && grid[x - 1][y] === currentVal) {
+    //     this.paintFill(grid, x - 1, y, newColor);
+    //   }
+    //   // bottom
+    //   if (x + 1 < grid.length && grid[x + 1][y] === currentVal) {
+    //     this.paintFill(grid, x + 1, y, newColor);
+    //   }
+    //   // left
+    //   if (y - 1 >= 0 && grid[x][y - 1] === currentVal) {
+    //     this.paintFill(grid, x, y - 1, newColor);
+    //   }
+    //   // right
+    //   if (
+    //     y + 1 < grid[x].length &&
+    //     grid[x][y + 1] === currentVal
+    //   ) {
+    //     this.paintFill(grid, x, y + 1, newColor);
+    //   }
+    //   return grid;
+    // },
     paintFill(x: number, y: number, newColor: number) {
-      let currentVal = this.pixels[x][y];
+      const currentVal = this.pixels[x][y];
       // set currentVal to newColor
       this.pixels[x][y] = newColor;
 
@@ -84,6 +120,37 @@ export default defineComponent({
     },
   },
 });
+
+    // function paintFill(grid: number[][], x: number, y: number, newColor: number) {
+    //   console.log(x, y)
+    //   const currentVal = grid[x][y];
+    //   // set currentVal to newColor
+    //   grid[x][y] = newColor;
+    //   console.log(grid);
+    //   // check top, bottom, left and right
+    //   // if they match currentVal, call function with that val's coordinates
+    //   // top
+    //   if (x - 1 >= 0 && grid[x - 1][y] === currentVal) {
+    //     paintFill(grid, x - 1, y, newColor);
+    //   }
+    //   // bottom
+    //   if (x + 1 < grid.length && grid[x + 1][y] === currentVal) {
+    //     paintFill(grid, x + 1, y, newColor);
+    //   }
+    //   // left
+    //   if (y - 1 >= 0 && grid[x][y - 1] === currentVal) {
+    //     paintFill(grid, x, y - 1, newColor);
+    //   }
+    //   // right
+    //   if (
+    //     y + 1 < grid[x].length &&
+    //     grid[x][y + 1] === currentVal
+    //   ) {
+    //     paintFill(grid, x, y + 1, newColor);
+    //   }
+    //   return grid;
+    // }
+
 </script>
 
 <style scoped>
