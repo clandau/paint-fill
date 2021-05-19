@@ -53,43 +53,9 @@ export default defineComponent({
       console.log(target.id);
       const [x, y] = target.id.split("-").map(i => parseInt(i));
       console.log(x,y)
-      // copy of pixels array
-      // const pixelsCopy: number[][] = this.pixels.map(a => {
-      //   return a.slice();
-      // })
-      // console.log(pixelsCopy)
-      // this.pixels = this.paintFill(pixelsCopy, x, y, 3);
       this.paintFill(x, y, 3);
     },
 
-    // paintFill(grid: number[][], x: number, y: number, newColor: number) {
-    //   const currentVal = grid[x][y];
-    //   // set currentVal to newColor
-    //   grid[x][y] = newColor;
-
-    //   // check top, bottom, left and right
-    //   // if they match currentVal, call function with that val's coordinates
-    //   // top
-    //   if (x - 1 >= 0 && grid[x - 1][y] === currentVal) {
-    //     this.paintFill(grid, x - 1, y, newColor);
-    //   }
-    //   // bottom
-    //   if (x + 1 < grid.length && grid[x + 1][y] === currentVal) {
-    //     this.paintFill(grid, x + 1, y, newColor);
-    //   }
-    //   // left
-    //   if (y - 1 >= 0 && grid[x][y - 1] === currentVal) {
-    //     this.paintFill(grid, x, y - 1, newColor);
-    //   }
-    //   // right
-    //   if (
-    //     y + 1 < grid[x].length &&
-    //     grid[x][y + 1] === currentVal
-    //   ) {
-    //     this.paintFill(grid, x, y + 1, newColor);
-    //   }
-    //   return grid;
-    // },
     paintFill(x: number, y: number, newColor: number) {
       const currentVal = this.pixels[x][y];
       // set currentVal to newColor
