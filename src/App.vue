@@ -1,19 +1,15 @@
 <template>
-  <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
-  <HelloWorld msg="Fill colors" />
-  <Grid />
+  <Grid msg="Color Fill" />
   
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import HelloWorld from './components/HelloWorld.vue'
 import Grid from "./components/Grid.vue";
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld,
     Grid
   }
 })
