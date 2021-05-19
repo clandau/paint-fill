@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="grid" :style="gridStyle">
-      <div v-for="(pixelCol, i) in pixels" :key="pixelCol">
+      <div v-for="(pixelCol, i) in pixels" :key="i">
         <div
           v-for="(pixel, j) in pixelCol"
-          :key="pixel"
+          :key="j"
           :class="'box box' + pixel"
           :id="`${i}-${j}`"
           v-on:click="handleColorChange"
@@ -58,6 +58,7 @@ export default defineComponent({
 
     paintFill(x: number, y: number, newColor: number) {
       const currentVal = this.pixels[x][y];
+      if (currentVal === newColor) return;
       // set currentVal to newColor
       this.pixels[x][y] = newColor;
 
@@ -86,36 +87,6 @@ export default defineComponent({
     },
   },
 });
-
-    // function paintFill(grid: number[][], x: number, y: number, newColor: number) {
-    //   console.log(x, y)
-    //   const currentVal = grid[x][y];
-    //   // set currentVal to newColor
-    //   grid[x][y] = newColor;
-    //   console.log(grid);
-    //   // check top, bottom, left and right
-    //   // if they match currentVal, call function with that val's coordinates
-    //   // top
-    //   if (x - 1 >= 0 && grid[x - 1][y] === currentVal) {
-    //     paintFill(grid, x - 1, y, newColor);
-    //   }
-    //   // bottom
-    //   if (x + 1 < grid.length && grid[x + 1][y] === currentVal) {
-    //     paintFill(grid, x + 1, y, newColor);
-    //   }
-    //   // left
-    //   if (y - 1 >= 0 && grid[x][y - 1] === currentVal) {
-    //     paintFill(grid, x, y - 1, newColor);
-    //   }
-    //   // right
-    //   if (
-    //     y + 1 < grid[x].length &&
-    //     grid[x][y + 1] === currentVal
-    //   ) {
-    //     paintFill(grid, x, y + 1, newColor);
-    //   }
-    //   return grid;
-    // }
 
 </script>
 
