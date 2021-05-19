@@ -1,18 +1,24 @@
 <template>
   <Grid msg="Color Fill" />
-  
+  <footer>
+    <p>
+      A
+      <a href="https://github.com/clandau" target="_blank">Courtney Landau</a>
+      project.
+    </p>
+  </footer>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from "vue";
 import Grid from "./components/Grid.vue";
 
 export default defineComponent({
-  name: 'App',
+  name: "App",
   components: {
-    Grid
-  }
-})
+    Grid,
+  },
+});
 </script>
 
 <style>
@@ -23,5 +29,16 @@ export default defineComponent({
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+footer {
+  display: flex;
+  padding: 5px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+}
+a {
+  color: #2c3e50;
 }
 </style>
