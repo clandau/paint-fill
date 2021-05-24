@@ -2,7 +2,14 @@
   <div class="container">
     <h1>{{ msg }}</h1>
     <p>Click a box and be AMAZED at the color changes!</p>
-    <button class="button" @click="resetGrid">Reset Grid</button>
+    <div>
+      <input type="radio" name="color" id="color-choice-1" value="color1" />
+      <label for="color-choice-1">Color 1</label>
+      <input type="radio" name="color" id="color-choice-2" value="color2" />
+      <label for="color-choice-2">Color 2</label>
+      <input type="radio" name="color" id="color-choice-3" value="color3" />
+      <label for="color-choice-3">Color 3</label>
+    </div>
   </div>
   <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
     <div v-for="(pixelCol, i) in pixels" :key="i">
@@ -14,6 +21,10 @@
         v-on:click="handleColorChange"
       ></div>
     </div>
+  </div>
+
+  <div class="container">
+    <button class="button" @click="resetGrid">Reset Grid</button>
   </div>
 </template>
 
@@ -49,6 +60,7 @@ export default defineComponent({
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ],
       pixelSize: "30px",
+      colorsArray: [],
     };
   },
 
@@ -65,8 +77,8 @@ export default defineComponent({
 
     isOneColor() {
       const flattened: number[] = this.pixels.flat();
-      return flattened.every(item => item === flattened[0]);
-    }
+      return flattened.every((item) => item === flattened[0]);
+    },
   },
 
   methods: {
@@ -144,7 +156,7 @@ export default defineComponent({
   background-color: aquamarine;
 }
 .box1 {
-  background-color: orangered;
+  background-color: #f34213;
 }
 .box2 {
   background-color: whitesmoke;
@@ -166,8 +178,8 @@ export default defineComponent({
 }
 
 .rotate-center {
-	-webkit-animation: rotate-center 0.6s ease-in-out both;
-	        animation: rotate-center 0.6s ease-in-out both;
+  -webkit-animation: rotate-center 0.6s ease-in-out both;
+  animation: rotate-center 0.6s ease-in-out both;
 }
 
 /* ----------------------------------------------
@@ -185,26 +197,21 @@ export default defineComponent({
 @-webkit-keyframes rotate-center {
   0% {
     -webkit-transform: rotate(0);
-            transform: rotate(0);
+    transform: rotate(0);
   }
   100% {
     -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
 @keyframes rotate-center {
   0% {
     -webkit-transform: rotate(0);
-            transform: rotate(0);
+    transform: rotate(0);
   }
   100% {
     -webkit-transform: rotate(360deg);
-            transform: rotate(360deg);
+    transform: rotate(360deg);
   }
 }
-
-
-
-
-
 </style>
