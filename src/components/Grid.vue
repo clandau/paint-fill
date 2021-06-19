@@ -2,13 +2,12 @@
   <div class="container">
     <h1>{{ msg }}</h1>
     <p>Click a box and be AMAZED at the color changes!</p>
-    <div>
-      <input type="radio" name="color" id="color-choice-1" value="color1" />
-      <label for="color-choice-1">Color 1</label>
-      <input type="radio" name="color" id="color-choice-2" value="color2" />
-      <label for="color-choice-2">Color 2</label>
-      <input type="radio" name="color" id="color-choice-3" value="color3" />
-      <label for="color-choice-3">Color 3</label>
+    <p>Current color {{ currentColor }}</p>
+    <div class="color-picker-wrapper">
+      <div v-for="(color, i) in colorsArray" class="color-box"
+          :style="`background-color: ${color};`"
+          @click="handleColorSelect(i)" :id="`color-${i}`" :key="i">
+      </div>
     </div>
   </div>
   <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
@@ -60,10 +59,22 @@ export default defineComponent({
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ],
       pixelSize: "30px",
-      colorsArray: [],
+      // colorsArray: ["#2c3e50", "#f34213", "#7fffd4", "#dda0dd"],
+      colorsArray: [
+        "#7366bd",
+        "#47abcc",
+        "#39a78e",
+        "#93c572",
+        "#f4c430",
+        "#fa9618",
+        "#ff6700",
+        "#dc143c",
+        "#f653a6",
+        "#dda0dd",
+      ],
+      currentColor: "",
     };
   },
-
   computed: {
     gridStyle(): object {
       const columns = this.pixels[0].length;
@@ -118,6 +129,15 @@ export default defineComponent({
       return;
     },
 
+    handleColorSelect(i: number) {
+      this.currentColor = this.colorsArray[i];
+      // add border to box to show it is selected
+    },
+
+    isSelectedColor(i: number) {
+      return this.currentColor = this.colorsArray[i];
+    },
+
     resetGrid() {
       this.pixels = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -146,6 +166,24 @@ export default defineComponent({
 .container {
   padding: 10px;
 }
+
+.color-picker-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+}
+
+.color-box {
+  height: 30px;
+  width: 30px;
+  margin: 2px;
+}
+
+.box-border {
+  border-color: black;
+}
+
+
 .box {
   height: 30px;
   border-style: solid;
