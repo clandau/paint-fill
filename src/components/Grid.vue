@@ -4,10 +4,25 @@
     <p>Click a box and be AMAZED at the color changes!</p>
     <p>Current color {{ currentColor }}</p>
     <div class="color-picker-wrapper">
-      <div v-for="(color, i) in colorsArray" :class="[ 'color-box', { 'box-border': isSelectedColor(i) }]"
-          :style="`background-color: ${color};`"
-          @click="handleColorSelect(i)" :id="`color-${i}`" :key="i">
-      </div>
+      <div
+        v-for="(color, i) in colorsArray"
+        :class="['color-box', { 'box-border': isSelectedColor(i) }]"
+        :style="`background-color: ${color};`"
+        @click="handleColorSelect(i)"
+        :id="`color-${i}`"
+        :key="i"
+      ></div>
+    </div>
+  </div>
+  <div class="grid" :style="gridStyle">
+    <div v-for="col of numCols" :key="`col-${col}`">
+      <div
+        v-for="row in numRows"
+        :key="`row-${row}`"
+        class="box"
+        :id="`${row}-${col}`"
+        @click="handleMouseClick"
+      ></div>
     </div>
   </div>
   <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
@@ -40,6 +55,8 @@ export default defineComponent({
   },
   data() {
     return {
+      numCols: 20,
+      numRows: 20,
       pixels: [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
@@ -73,16 +90,16 @@ export default defineComponent({
         "#dda0dd",
       ],
       currentColor: "",
+      fill: false,
     };
   },
   computed: {
     gridStyle(): object {
-      const columns = this.pixels[0].length;
       return {
         display: "grid",
         "justify-content": "center",
         "align-content": "center",
-        "grid-template-columns": `repeat(${columns}, ${this.pixelSize})`,
+        "grid-template-columns": `repeat(${this.numCols}, ${this.pixelSize})`,
       };
     },
 
@@ -157,6 +174,19 @@ export default defineComponent({
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ];
+    },
+
+    handleMouseClick(e: MouseEvent) {
+      const target = e.target as HTMLTextAreaElement;
+      const [x, y] = target.id.split("-").map((i) => parseInt(i));
+      if (!this.fill) {
+        // change color of this box
+        // this.backgroundColors[x - 1][y - 1] = this.currentColor;
+        target.style.backgroundColor = this.currentColor;
+      } else {
+        // fill color
+        // this.paintFill(x, y, this.currentColor);
+      }
     },
   },
 });
