@@ -4,7 +4,7 @@
     <p>Click a box and be AMAZED at the color changes!</p>
     <p>Current color {{ currentColor }}</p>
     <div class="color-picker-wrapper">
-      <div v-for="(color, i) in colorsArray" class="color-box"
+      <div v-for="(color, i) in colorsArray" :class="[ 'color-box', { 'box-border': isSelectedColor(i) }]"
           :style="`background-color: ${color};`"
           @click="handleColorSelect(i)" :id="`color-${i}`" :key="i">
       </div>
@@ -135,7 +135,7 @@ export default defineComponent({
     },
 
     isSelectedColor(i: number) {
-      return this.currentColor = this.colorsArray[i];
+      return this.currentColor === this.colorsArray[i];
     },
 
     resetGrid() {
@@ -180,9 +180,8 @@ export default defineComponent({
 }
 
 .box-border {
-  border-color: black;
+  border: 2px solid black;
 }
-
 
 .box {
   height: 30px;
