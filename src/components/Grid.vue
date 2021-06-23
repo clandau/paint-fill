@@ -1,44 +1,49 @@
 <template>
-  <div class="container">
-    <h1>{{ msg }}</h1>
-    <p>Click a box and be AMAZED at the color changes!</p>
-    <p>Current color {{ currentColor }}</p>
-    <div class="color-picker-wrapper">
-      <div
-        v-for="(color, i) in colorsArray"
-        :class="['color-box', { 'box-border': isSelectedColor(i) }]"
-        :style="`background-color: ${color};`"
-        @click="handleColorSelect(i)"
-        :id="`color-${i}`"
-        :key="i"
-      ></div>
+  <div class="main-container" @mouseup="isDrawing = false">
+    <div class="container">
+      <h1>{{ msg }}</h1>
+      <p>Click a box and be AMAZED at the color changes!</p>
+      <div class="color-picker-wrapper">
+        <div
+          v-for="(color, i) in colorsArray"
+          :class="['color-box', { 'box-border': isSelectedColor(i) }]"
+          :style="`background-color: ${color};`"
+          @click="handleColorSelect(i)"
+          :id="`color-${i}`"
+          :key="i"
+        ></div>
+      </div>
     </div>
-  </div>
-  <div class="grid" :style="gridStyle">
-    <div v-for="col of numCols" :key="`col-${col}`">
+    <div class="grid" :style="gridStyle">
       <div
-        v-for="row in numRows"
-        :key="`row-${row}`"
-        class="box"
-        :id="`${row}-${col}`"
-        @click="handleMouseClick"
-      ></div>
+        v-for="col of numCols"
+        :key="`col-${col}`"
+        @mousedown="handleMouseDown"
+        @mousemove="handleMouseMove"
+      >
+        <div
+          v-for="row in numRows"
+          :key="`row-${row}`"
+          class="box"
+          :id="`${row}-${col}`"
+          @click="handleMouseClick"
+        ></div>
+      </div>
     </div>
-  </div>
-  <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
-    <div v-for="(pixelCol, i) in pixels" :key="i">
-      <div
-        v-for="(pixel, j) in pixelCol"
-        :key="j"
-        :class="['box box' + pixel]"
-        :id="`${i}-${j}`"
-        v-on:click="handleColorChange"
-      ></div>
+    <!-- <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
+      <div v-for="(pixelCol, i) in pixels" :key="i">
+        <div
+          v-for="(pixel, j) in pixelCol"
+          :key="j"
+          :class="['box box' + pixel]"
+          :id="`${i}-${j}`"
+          v-on:click="handleColorChange"
+        ></div>
+      </div>
+    </div> -->
+    <div class="container">
+      <button class="button" @click="resetGrid">Reset Grid</button>
     </div>
-  </div>
-
-  <div class="container">
-    <button class="button" @click="resetGrid">Reset Grid</button>
   </div>
 </template>
 
@@ -76,7 +81,6 @@ export default defineComponent({
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ],
       pixelSize: "30px",
-      // colorsArray: ["#2c3e50", "#f34213", "#7fffd4", "#dda0dd"],
       colorsArray: [
         "#7366bd",
         "#47abcc",
@@ -91,6 +95,7 @@ export default defineComponent({
       ],
       currentColor: "",
       fill: false,
+      isDrawing: false,
     };
   },
   computed: {
@@ -151,6 +156,39 @@ export default defineComponent({
       // add border to box to show it is selected
     },
 
+    handleMouseDown(e: MouseEvent) {
+      if (!this.fill) {
+        this.isDrawing = true;
+        const target = <HTMLTextAreaElement>e.target;
+        const [x, y] = target?.id.split("-").map((i: string) => parseInt(i));
+        target.style.backgroundColor = this.currentColor;
+      }
+    },
+
+    handleMouseMove(e: MouseEvent) {
+      if (this.isDrawing) {
+        const target = <HTMLTextAreaElement>e.target;
+        const [x, y] = target?.id.split("-").map((i: string) => parseInt(i));
+        target.style.backgroundColor = this.currentColor;
+      }
+    },
+
+    handleMouseUp() {
+      this.isDrawing = false;
+    },
+
+    handleMouseClick(e: MouseEvent) {
+      const target = e.target as HTMLTextAreaElement;
+      const [x, y] = target.id.split("-").map((i) => parseInt(i));
+      if (!this.fill) {
+        // change color of this box
+        // this.backgroundColors[x - 1][y - 1] = this.currentColor;
+        target.style.backgroundColor = this.currentColor;
+      } else {
+        // fill color
+        // this.paintFill(x, y, this.currentColor);
+      }
+    },
     isSelectedColor(i: number) {
       return this.currentColor === this.colorsArray[i];
     },
@@ -174,19 +212,6 @@ export default defineComponent({
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
         [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
       ];
-    },
-
-    handleMouseClick(e: MouseEvent) {
-      const target = e.target as HTMLTextAreaElement;
-      const [x, y] = target.id.split("-").map((i) => parseInt(i));
-      if (!this.fill) {
-        // change color of this box
-        // this.backgroundColors[x - 1][y - 1] = this.currentColor;
-        target.style.backgroundColor = this.currentColor;
-      } else {
-        // fill color
-        // this.paintFill(x, y, this.currentColor);
-      }
     },
   },
 });
