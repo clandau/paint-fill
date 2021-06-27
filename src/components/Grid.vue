@@ -5,7 +5,7 @@
       <p>Click a box and be AMAZED at the color changes!</p>
       <div class="color-picker-wrapper">
         <div
-          v-for="(color, i) in colorsArray"
+          v-for="(color, i) of colorsArray"
           :class="['color-box', { 'box-border': isSelectedColor(i) }]"
           :style="`background-color: ${color};`"
           @click="handleColorSelect(i)"
@@ -15,32 +15,17 @@
       </div>
     </div>
     <div class="grid" :style="gridStyle">
-      <div
-        v-for="col of numCols"
-        :key="`col-${col}`"
-        @mousedown="handleMouseDown"
-        @mousemove="handleMouseMove"
-      >
+      <div v-for="(col, i) of cells" :key="i">
         <div
-          v-for="row in numRows"
-          :key="`row-${row}`"
+          v-for="(row, j) of col"
+          :key="i - j"
           class="box"
-          :id="`${row}-${col}`"
-          @click="handleMouseClick"
+          :style="{ backgroundColor: row.color }"
+          @mousedown="handleMouseDown(i, j)"
+          @mousemove="handleMouseMove(i, j)"
         ></div>
       </div>
     </div>
-    <!-- <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
-      <div v-for="(pixelCol, i) in pixels" :key="i">
-        <div
-          v-for="(pixel, j) in pixelCol"
-          :key="j"
-          :class="['box box' + pixel]"
-          :id="`${i}-${j}`"
-          v-on:click="handleColorChange"
-        ></div>
-      </div>
-    </div> -->
     <div class="container">
       <button class="button" @click="resetGrid">Reset Grid</button>
     </div>
@@ -49,6 +34,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Cell } from "../types";
 
 export default defineComponent({
   name: "Grid",
@@ -62,24 +48,6 @@ export default defineComponent({
     return {
       numCols: 20,
       numRows: 20,
-      pixels: [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 2, 2, 0, 1, 1, 1, 2, 2, 2, 2, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-      ],
       pixelSize: "30px",
       colorsArray: [
         "#7366bd",
@@ -93,10 +61,24 @@ export default defineComponent({
         "#f653a6",
         "#dda0dd",
       ],
+      cells: [] as Cell[][],
       currentColor: "",
       fill: false,
       isDrawing: false,
     };
+  },
+  created() {
+    let i = 0;
+    let j = 0;
+    while (i < this.numCols) {
+      this.cells.push([]);
+      while (j < this.numRows) {
+        this.cells[i].push({ color: "white" });
+        j++;
+      }
+      i++;
+      j = 0;
+    }
   },
   computed: {
     gridStyle(): object {
@@ -109,8 +91,8 @@ export default defineComponent({
     },
 
     isOneColor() {
-      const flattened: number[] = this.pixels.flat();
-      return flattened.every((item) => item === flattened[0]);
+      // TODO add check here
+      return false;
     },
   },
 
@@ -152,66 +134,32 @@ export default defineComponent({
     },
 
     handleColorSelect(i: number) {
-      this.currentColor = this.colorsArray[i];
       // add border to box to show it is selected
+      this.currentColor = this.colorsArray[i];
     },
 
-    handleMouseDown(e: MouseEvent) {
+    handleMouseDown(y: number, x: number) {
       if (!this.fill) {
         this.isDrawing = true;
-        const target = <HTMLTextAreaElement>e.target;
-        const [x, y] = target?.id.split("-").map((i: string) => parseInt(i));
-        target.style.backgroundColor = this.currentColor;
+        this.cells[y][x].color = this.currentColor;
       }
     },
 
-    handleMouseMove(e: MouseEvent) {
+    handleMouseMove(y: number, x: number) {
       if (this.isDrawing) {
-        const target = <HTMLTextAreaElement>e.target;
-        const [x, y] = target?.id.split("-").map((i: string) => parseInt(i));
-        target.style.backgroundColor = this.currentColor;
+        this.cells[y][x].color = this.currentColor;
       }
     },
 
     handleMouseUp() {
       this.isDrawing = false;
     },
-
-    handleMouseClick(e: MouseEvent) {
-      const target = e.target as HTMLTextAreaElement;
-      const [x, y] = target.id.split("-").map((i) => parseInt(i));
-      if (!this.fill) {
-        // change color of this box
-        // this.backgroundColors[x - 1][y - 1] = this.currentColor;
-        target.style.backgroundColor = this.currentColor;
-      } else {
-        // fill color
-        // this.paintFill(x, y, this.currentColor);
-      }
-    },
     isSelectedColor(i: number) {
       return this.currentColor === this.colorsArray[i];
     },
 
     resetGrid() {
-      this.pixels = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 2, 2, 0, 1, 1, 1, 2, 2, 2, 2, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-      ];
+
     },
   },
 });
