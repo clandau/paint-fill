@@ -2,7 +2,7 @@
   <div class="main-container" @mouseup="isDrawing = false">
     <div class="container">
       <h1>{{ msg }}</h1>
-      <p>Paint with colors!</p>
+      <p>Paint the grid!</p>
       <div class="color-picker-wrapper">
         <div
           v-for="(color, i) of colorsArray"
@@ -12,16 +12,29 @@
           :key="i"
         ></div>
       </div>
+      <div>
+        <div class="switch">
+          <input
+            type="checkbox"
+            class="switch-input"
+            id="fill-switch"
+            v-model="fill"
+          />
+          <label for="fill-switch" class="switch-label">Fill</label>
+        </div>
+        <span class="container">Fill</span>
+      </div>
     </div>
-    <div class="grid" :style="gridStyle">
+    <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
       <div v-for="(col, i) of cells" :key="i">
         <div
           v-for="(row, j) of col"
           :key="i - j"
           class="box"
-          :style="{ backgroundColor: row.color }"
+          :style="{ backgroundColor: row.color, height: pixelSize }"
           @mousedown="handleMouseDown(i, j)"
           @mousemove="handleMouseMove(i, j)"
+          @click="handleMouseClick(i, j)"
         ></div>
       </div>
     </div>
@@ -45,9 +58,9 @@ export default defineComponent({
   },
   data() {
     return {
-      numCols: 20,
-      numRows: 20,
-      pixelSize: "30px",
+      numCols: 30,
+      numRows: 30,
+      pixelSize: "25px",
       initialColor: "white",
       colorsArray: [
         "#7366bd",
@@ -60,6 +73,11 @@ export default defineComponent({
         "#dc143c",
         "#f653a6",
         "#dda0dd",
+        "#565656",
+        "#B2FFA9",
+        "#FF4A1C",
+        "#81523F",
+        "#3F2A2B",
       ],
       cells: [] as Cell[][],
       currentColor: "",
@@ -92,46 +110,14 @@ export default defineComponent({
 
     isOneColor() {
       // TODO add check here
-      return false;
+      const flatCells: Cell[] = this.cells.flat();
+      return flatCells.every(item => {
+        return item.color === flatCells[0].color && item.color !== "white"
+      })
     },
   },
 
   methods: {
-    handleColorChange(e: MouseEvent) {
-      const target = e.target as HTMLTextAreaElement;
-      const [x, y] = target.id.split("-").map((i) => parseInt(i));
-      this.paintFill(x, y, 3);
-    },
-
-    paintFill(x: number, y: number, newColor: number) {
-      // const currentVal = this.pixels[x][y];
-      // if (currentVal === newColor) return;
-      // // set currentVal to newColor
-      // this.pixels[x][y] = newColor;
-      // // check top, bottom, left and right
-      // // if they match currentVal, call function with that val's coordinates
-      // // top
-      // if (x - 1 >= 0 && this.pixels[x - 1][y] === currentVal) {
-      //   this.paintFill(x - 1, y, newColor);
-      // }
-      // // bottom
-      // if (x + 1 < this.pixels.length && this.pixels[x + 1][y] === currentVal) {
-      //   this.paintFill(x + 1, y, newColor);
-      // }
-      // // left
-      // if (y - 1 >= 0 && this.pixels[x][y - 1] === currentVal) {
-      //   this.paintFill(x, y - 1, newColor);
-      // }
-      // // right
-      // if (
-      //   y + 1 < this.pixels[x].length &&
-      //   this.pixels[x][y + 1] === currentVal
-      // ) {
-      //   this.paintFill(x, y + 1, newColor);
-      // }
-      // return;
-    },
-
     handleColorSelect(i: number) {
       // add border to box to show it is selected
       this.currentColor = this.colorsArray[i];
@@ -150,9 +136,47 @@ export default defineComponent({
       }
     },
 
+    handleMouseClick(y: number, x: number) {
+      if (this.fill) {
+        this.paintFill(y, x);
+      }
+    },
+
     handleMouseUp() {
       this.isDrawing = false;
     },
+    paintFill(x: number, y: number) {
+      const currentVal = this.cells[x][y].color;
+      if (currentVal === this.currentColor) return;
+      // set currentVal to newColor
+      this.cells[x][y].color = this.currentColor;
+      // check top, bottom, left and right
+      // if they match currentVal, call function with that val's coordinates
+      // top
+      if (x - 1 >= 0 && this.cells[x - 1][y].color === currentVal) {
+        this.paintFill(x - 1, y);
+      }
+      // bottom
+      if (
+        x + 1 < this.cells.length &&
+        this.cells[x + 1][y].color === currentVal
+      ) {
+        this.paintFill(x + 1, y);
+      }
+      // left
+      if (y - 1 >= 0 && this.cells[x][y - 1].color === currentVal) {
+        this.paintFill(x, y - 1);
+      }
+      // right
+      if (
+        y + 1 < this.cells[x].length &&
+        this.cells[x][y + 1].color === currentVal
+      ) {
+        this.paintFill(x, y + 1);
+      }
+      return;
+    },
+
     isSelectedColor(i: number) {
       return this.currentColor === this.colorsArray[i];
     },
@@ -190,10 +214,9 @@ export default defineComponent({
 }
 
 .box {
-  height: 30px;
   border-style: solid;
   border-width: 1px;
-  border-color: #2c3e50;
+  border-color: #909aa3;
 }
 .box0 {
   background-color: aquamarine;
@@ -212,12 +235,67 @@ export default defineComponent({
   font-size: 16px;
   background-color: white;
   color: black;
-  border: 1px solid #2c3e50;
+  border: 1px solid #97afc7;
 }
 
 .button:hover {
   background-color: #2c3e50;
   color: white;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+}
+
+.switch-input {
+  display: none;
+}
+.switch-label {
+  display: block;
+  width: 48px;
+  height: 24px;
+  text-indent: -150%;
+  clip: rect(0 0 0 0);
+  color: transparent;
+  user-select: none;
+  /* position: relative;
+    padding-left: 2.3em;
+    font-size: 1.05em;
+    line-height: 1.7;
+    cursor: pointer; */
+}
+.switch-label::before,
+.switch-label::after {
+  content: "";
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+.switch-label::before {
+  width: 100%;
+  height: 100%;
+  background-color: #dedede;
+  border-radius: 9999em;
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.switch-label::after {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+  -webkit-transition: left 0.25s ease;
+  transition: left 0.25s ease;
+}
+.switch-input:checked + .switch-label::before {
+  background-color: #277da1;
+}
+.switch-input:checked + .switch-label::after {
+  left: 24px;
 }
 
 .rotate-center {
