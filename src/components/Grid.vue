@@ -2,7 +2,7 @@
   <div class="main-container" @mouseup="isDrawing = false">
     <div class="container">
       <h1>{{ msg }}</h1>
-      <p>Paint with colors!</p>
+      <p>Paint the grid!</p>
       <div class="color-picker-wrapper">
         <div
           v-for="(color, i) of colorsArray"
@@ -11,13 +11,21 @@
           @click="handleColorSelect(i)"
           :key="i"
         ></div>
-        <div class="container">
-          <input type="checkbox" id="checkbox" v-model="fill" />
-          <label for="checkbox">Fill</label>
+      </div>
+      <div>
+        <div class="switch">
+          <input
+            type="checkbox"
+            class="switch-input"
+            id="fill-switch"
+            v-model="fill"
+          />
+          <label for="fill-switch" class="switch-label">Fill</label>
         </div>
+        <span class="container">Fill</span>
       </div>
     </div>
-    <div class="grid" :style="gridStyle">
+    <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
       <div v-for="(col, i) of cells" :key="i">
         <div
           v-for="(row, j) of col"
@@ -65,6 +73,11 @@ export default defineComponent({
         "#dc143c",
         "#f653a6",
         "#dda0dd",
+        "#565656",
+        "#B2FFA9",
+        "#FF4A1C",
+        "#81523F",
+        "#3F2A2B",
       ],
       cells: [] as Cell[][],
       currentColor: "",
@@ -198,7 +211,7 @@ export default defineComponent({
 }
 
 .box {
-  border-style: solid; 
+  border-style: solid;
   border-width: 1px;
   border-color: #909aa3;
 }
@@ -225,6 +238,61 @@ export default defineComponent({
 .button:hover {
   background-color: #2c3e50;
   color: white;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+}
+
+.switch-input {
+  display: none;
+}
+.switch-label {
+  display: block;
+  width: 48px;
+  height: 24px;
+  text-indent: -150%;
+  clip: rect(0 0 0 0);
+  color: transparent;
+  user-select: none;
+  /* position: relative;
+    padding-left: 2.3em;
+    font-size: 1.05em;
+    line-height: 1.7;
+    cursor: pointer; */
+}
+.switch-label::before,
+.switch-label::after {
+  content: "";
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+.switch-label::before {
+  width: 100%;
+  height: 100%;
+  background-color: #dedede;
+  border-radius: 9999em;
+  -webkit-transition: background-color 0.25s ease;
+  transition: background-color 0.25s ease;
+}
+.switch-label::after {
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.45);
+  -webkit-transition: left 0.25s ease;
+  transition: left 0.25s ease;
+}
+.switch-input:checked + .switch-label::before {
+  background-color: #277da1;
+}
+.switch-input:checked + .switch-label::after {
+  left: 24px;
 }
 
 .rotate-center {
