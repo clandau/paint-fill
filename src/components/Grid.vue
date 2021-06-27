@@ -110,7 +110,10 @@ export default defineComponent({
 
     isOneColor() {
       // TODO add check here
-      return false;
+      const flatCells: Cell[] = this.cells.flat();
+      return flatCells.every(item => {
+        return item.color === flatCells[0].color && item.color !== "white"
+      })
     },
   },
 
