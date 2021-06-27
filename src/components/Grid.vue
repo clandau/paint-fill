@@ -2,14 +2,13 @@
   <div class="main-container" @mouseup="isDrawing = false">
     <div class="container">
       <h1>{{ msg }}</h1>
-      <p>Click a box and be AMAZED at the color changes!</p>
+      <p>Paint with colors!</p>
       <div class="color-picker-wrapper">
         <div
           v-for="(color, i) of colorsArray"
           :class="['color-box', { 'box-border': isSelectedColor(i) }]"
           :style="`background-color: ${color};`"
           @click="handleColorSelect(i)"
-          :id="`color-${i}`"
           :key="i"
         ></div>
       </div>
@@ -49,6 +48,7 @@ export default defineComponent({
       numCols: 20,
       numRows: 20,
       pixelSize: "30px",
+      initialColor: "white",
       colorsArray: [
         "#7366bd",
         "#47abcc",
@@ -73,7 +73,7 @@ export default defineComponent({
     while (i < this.numCols) {
       this.cells.push([]);
       while (j < this.numRows) {
-        this.cells[i].push({ color: "white" });
+        this.cells[i].push({ color: this.initialColor });
         j++;
       }
       i++;
@@ -104,33 +104,32 @@ export default defineComponent({
     },
 
     paintFill(x: number, y: number, newColor: number) {
-      const currentVal = this.pixels[x][y];
-      if (currentVal === newColor) return;
-      // set currentVal to newColor
-      this.pixels[x][y] = newColor;
-
-      // check top, bottom, left and right
-      // if they match currentVal, call function with that val's coordinates
-      // top
-      if (x - 1 >= 0 && this.pixels[x - 1][y] === currentVal) {
-        this.paintFill(x - 1, y, newColor);
-      }
-      // bottom
-      if (x + 1 < this.pixels.length && this.pixels[x + 1][y] === currentVal) {
-        this.paintFill(x + 1, y, newColor);
-      }
-      // left
-      if (y - 1 >= 0 && this.pixels[x][y - 1] === currentVal) {
-        this.paintFill(x, y - 1, newColor);
-      }
-      // right
-      if (
-        y + 1 < this.pixels[x].length &&
-        this.pixels[x][y + 1] === currentVal
-      ) {
-        this.paintFill(x, y + 1, newColor);
-      }
-      return;
+      // const currentVal = this.pixels[x][y];
+      // if (currentVal === newColor) return;
+      // // set currentVal to newColor
+      // this.pixels[x][y] = newColor;
+      // // check top, bottom, left and right
+      // // if they match currentVal, call function with that val's coordinates
+      // // top
+      // if (x - 1 >= 0 && this.pixels[x - 1][y] === currentVal) {
+      //   this.paintFill(x - 1, y, newColor);
+      // }
+      // // bottom
+      // if (x + 1 < this.pixels.length && this.pixels[x + 1][y] === currentVal) {
+      //   this.paintFill(x + 1, y, newColor);
+      // }
+      // // left
+      // if (y - 1 >= 0 && this.pixels[x][y - 1] === currentVal) {
+      //   this.paintFill(x, y - 1, newColor);
+      // }
+      // // right
+      // if (
+      //   y + 1 < this.pixels[x].length &&
+      //   this.pixels[x][y + 1] === currentVal
+      // ) {
+      //   this.paintFill(x, y + 1, newColor);
+      // }
+      // return;
     },
 
     handleColorSelect(i: number) {
@@ -159,7 +158,11 @@ export default defineComponent({
     },
 
     resetGrid() {
-
+      this.cells.map((col) => {
+        col.map((row) => {
+          row.color = this.initialColor;
+        });
+      });
     },
   },
 });
