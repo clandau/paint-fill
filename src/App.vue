@@ -1,13 +1,7 @@
 <template>
 
   <Grid msg="Color Fill" />
-  <footer>
-    <p>
-      A
-      <a href="https://github.com/clandau" target="_blank">Courtney Landau</a>
-      project.
-    </p>
-  </footer>
+  <footer>A <a href="http://celandau.com" target="_blank">Courtney Landau</a> production. </footer>
 </template>
 
 <script lang="ts">

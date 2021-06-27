@@ -1,34 +1,39 @@
 <template>
-  <div class="container">
-    <h1>{{ msg }}</h1>
-    <p>Click a box and be AMAZED at the color changes!</p>
-    <p>Current color {{ currentColor }}</p>
-    <div class="color-picker-wrapper">
-      <div v-for="(color, i) in colorsArray" :class="[ 'color-box', { 'box-border': isSelectedColor(i) }]"
+  <div class="main-container" @mouseup="isDrawing = false">
+    <div class="container">
+      <h1>{{ msg }}</h1>
+      <p>Paint with colors!</p>
+      <div class="color-picker-wrapper">
+        <div
+          v-for="(color, i) of colorsArray"
+          :class="['color-box', { 'box-border': isSelectedColor(i) }]"
           :style="`background-color: ${color};`"
-          @click="handleColorSelect(i)" :id="`color-${i}`" :key="i">
+          @click="handleColorSelect(i)"
+          :key="i"
+        ></div>
       </div>
     </div>
-  </div>
-  <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
-    <div v-for="(pixelCol, i) in pixels" :key="i">
-      <div
-        v-for="(pixel, j) in pixelCol"
-        :key="j"
-        :class="['box box' + pixel]"
-        :id="`${i}-${j}`"
-        v-on:click="handleColorChange"
-      ></div>
+    <div class="grid" :style="gridStyle">
+      <div v-for="(col, i) of cells" :key="i">
+        <div
+          v-for="(row, j) of col"
+          :key="i - j"
+          class="box"
+          :style="{ backgroundColor: row.color }"
+          @mousedown="handleMouseDown(i, j)"
+          @mousemove="handleMouseMove(i, j)"
+        ></div>
+      </div>
     </div>
-  </div>
-
-  <div class="container">
-    <button class="button" @click="resetGrid">Reset Grid</button>
+    <div class="container">
+      <button class="button" @click="resetGrid">Reset Grid</button>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { Cell } from "../types";
 
 export default defineComponent({
   name: "Grid",
@@ -40,26 +45,10 @@ export default defineComponent({
   },
   data() {
     return {
-      pixels: [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 2, 2, 0, 1, 1, 1, 2, 2, 2, 2, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-      ],
+      numCols: 20,
+      numRows: 20,
       pixelSize: "30px",
-      // colorsArray: ["#2c3e50", "#f34213", "#7fffd4", "#dda0dd"],
+      initialColor: "white",
       colorsArray: [
         "#7366bd",
         "#47abcc",
@@ -72,23 +61,38 @@ export default defineComponent({
         "#f653a6",
         "#dda0dd",
       ],
+      cells: [] as Cell[][],
       currentColor: "",
+      fill: false,
+      isDrawing: false,
     };
+  },
+  created() {
+    let i = 0;
+    let j = 0;
+    while (i < this.numCols) {
+      this.cells.push([]);
+      while (j < this.numRows) {
+        this.cells[i].push({ color: this.initialColor });
+        j++;
+      }
+      i++;
+      j = 0;
+    }
   },
   computed: {
     gridStyle(): object {
-      const columns = this.pixels[0].length;
       return {
         display: "grid",
         "justify-content": "center",
         "align-content": "center",
-        "grid-template-columns": `repeat(${columns}, ${this.pixelSize})`,
+        "grid-template-columns": `repeat(${this.numCols}, ${this.pixelSize})`,
       };
     },
 
     isOneColor() {
-      const flattened: number[] = this.pixels.flat();
-      return flattened.every((item) => item === flattened[0]);
+      // TODO add check here
+      return false;
     },
   },
 
@@ -100,63 +104,65 @@ export default defineComponent({
     },
 
     paintFill(x: number, y: number, newColor: number) {
-      const currentVal = this.pixels[x][y];
-      if (currentVal === newColor) return;
-      // set currentVal to newColor
-      this.pixels[x][y] = newColor;
-
-      // check top, bottom, left and right
-      // if they match currentVal, call function with that val's coordinates
-      // top
-      if (x - 1 >= 0 && this.pixels[x - 1][y] === currentVal) {
-        this.paintFill(x - 1, y, newColor);
-      }
-      // bottom
-      if (x + 1 < this.pixels.length && this.pixels[x + 1][y] === currentVal) {
-        this.paintFill(x + 1, y, newColor);
-      }
-      // left
-      if (y - 1 >= 0 && this.pixels[x][y - 1] === currentVal) {
-        this.paintFill(x, y - 1, newColor);
-      }
-      // right
-      if (
-        y + 1 < this.pixels[x].length &&
-        this.pixels[x][y + 1] === currentVal
-      ) {
-        this.paintFill(x, y + 1, newColor);
-      }
-      return;
+      // const currentVal = this.pixels[x][y];
+      // if (currentVal === newColor) return;
+      // // set currentVal to newColor
+      // this.pixels[x][y] = newColor;
+      // // check top, bottom, left and right
+      // // if they match currentVal, call function with that val's coordinates
+      // // top
+      // if (x - 1 >= 0 && this.pixels[x - 1][y] === currentVal) {
+      //   this.paintFill(x - 1, y, newColor);
+      // }
+      // // bottom
+      // if (x + 1 < this.pixels.length && this.pixels[x + 1][y] === currentVal) {
+      //   this.paintFill(x + 1, y, newColor);
+      // }
+      // // left
+      // if (y - 1 >= 0 && this.pixels[x][y - 1] === currentVal) {
+      //   this.paintFill(x, y - 1, newColor);
+      // }
+      // // right
+      // if (
+      //   y + 1 < this.pixels[x].length &&
+      //   this.pixels[x][y + 1] === currentVal
+      // ) {
+      //   this.paintFill(x, y + 1, newColor);
+      // }
+      // return;
     },
 
     handleColorSelect(i: number) {
-      this.currentColor = this.colorsArray[i];
       // add border to box to show it is selected
+      this.currentColor = this.colorsArray[i];
     },
 
+    handleMouseDown(y: number, x: number) {
+      if (!this.fill) {
+        this.isDrawing = true;
+        this.cells[y][x].color = this.currentColor;
+      }
+    },
+
+    handleMouseMove(y: number, x: number) {
+      if (this.isDrawing) {
+        this.cells[y][x].color = this.currentColor;
+      }
+    },
+
+    handleMouseUp() {
+      this.isDrawing = false;
+    },
     isSelectedColor(i: number) {
       return this.currentColor === this.colorsArray[i];
     },
 
     resetGrid() {
-      this.pixels = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 2, 2, 0, 1, 1, 1, 2, 2, 2, 2, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0],
-        [1, 2, 2, 2, 2, 0, 1, 0, 1, 2, 2, 2, 2, 0, 1, 0],
-        [1, 1, 1, 2, 2, 0, 1, 0, 1, 1, 1, 2, 2, 0, 1, 0],
-        [1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-        [1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1],
-      ];
+      this.cells.map((col) => {
+        col.map((row) => {
+          row.color = this.initialColor;
+        });
+      });
     },
   },
 });
