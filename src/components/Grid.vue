@@ -23,7 +23,7 @@
           v-for="(row, j) of col"
           :key="i - j"
           class="box"
-          :style="{ backgroundColor: row.color }"
+          :style="{ backgroundColor: row.color, height: pixelSize }"
           @mousedown="handleMouseDown(i, j)"
           @mousemove="handleMouseMove(i, j)"
           @click="handleMouseClick(i, j)"
@@ -50,9 +50,9 @@ export default defineComponent({
   },
   data() {
     return {
-      numCols: 20,
-      numRows: 20,
-      pixelSize: "30px",
+      numCols: 30,
+      numRows: 30,
+      pixelSize: "25px",
       initialColor: "white",
       colorsArray: [
         "#7366bd",
@@ -198,10 +198,9 @@ export default defineComponent({
 }
 
 .box {
-  height: 30px;
-  border-style: solid;
+  border-style: solid; 
   border-width: 1px;
-  border-color: #2c3e50;
+  border-color: #909aa3;
 }
 .box0 {
   background-color: aquamarine;
@@ -220,7 +219,7 @@ export default defineComponent({
   font-size: 16px;
   background-color: white;
   color: black;
-  border: 1px solid #2c3e50;
+  border: 1px solid #97afc7;
 }
 
 .button:hover {
