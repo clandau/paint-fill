@@ -6,8 +6,8 @@
         class="selected-color"
         :style="`background-color: ${currentColor}
           `"
-      ></div>
-    </div>
+      >
+      </div>
     <div class="flex-wrapper">
       <div>
         <div class="switch">
@@ -24,6 +24,7 @@
       <div class="container">
         <button class="button" @click="resetGrid">Reset Grid</button>
       </div>
+    </div>
     </div>
     <div class="paint-container" @mouseup="isDrawing = false">
       <div class="container">
@@ -218,7 +219,7 @@ export default defineComponent({
 
 .paint-container {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
 }
 
 .color-picker-wrapper {
@@ -242,6 +243,10 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
   margin: 4px;
+}
+
+.align-left {
+  margin-right: auto;
 }
 
 .selected-color {
