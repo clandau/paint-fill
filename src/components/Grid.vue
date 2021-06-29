@@ -1,17 +1,14 @@
 <template>
-  <div class="main-container" @mouseup="isDrawing = false">
-    <div class="container">
-      <h1>{{ msg }}</h1>
-      <p>Paint the grid!</p>
-      <div class="color-picker-wrapper">
-        <div
-          v-for="(color, i) of colorsArray"
-          :class="['color-box', { 'box-border': isSelectedColor(i) }]"
-          :style="`background-color: ${color};`"
-          @click="handleColorSelect(i)"
-          :key="i"
-        ></div>
+  <div div class="main-container" @mouseup="isDrawing = false">
+    <h1>{{ msg }}</h1>
+    <div class="flex-wrapper">
+      <div
+        class="selected-color"
+        :style="`background-color: ${currentColor}
+          `"
+      >
       </div>
+    <div class="flex-wrapper">
       <div>
         <div class="switch">
           <input
@@ -24,22 +21,40 @@
         </div>
         <span class="container">Fill</span>
       </div>
-    </div>
-    <div class="grid" :style="gridStyle" :class="{ 'rotate-center': isOneColor }">
-      <div v-for="(col, i) of cells" :key="i">
-        <div
-          v-for="(row, j) of col"
-          :key="i - j"
-          class="box"
-          :style="{ backgroundColor: row.color, height: pixelSize }"
-          @mousedown="handleMouseDown(i, j)"
-          @mousemove="handleMouseMove(i, j)"
-          @click="handleMouseClick(i, j)"
-        ></div>
+      <div class="container">
+        <button class="button" @click="resetGrid">Reset Grid</button>
       </div>
     </div>
-    <div class="container">
-      <button class="button" @click="resetGrid">Reset Grid</button>
+    </div>
+    <div class="paint-container" @mouseup="isDrawing = false">
+      <div class="container">
+        <div class="color-picker-wrapper">
+          <div
+            v-for="(color, i) of colorsArray"
+            :class="['color-box', { 'box-border': isSelectedColor(i) }]"
+            :style="`background-color: ${color};`"
+            @click="handleColorSelect(i)"
+            :key="i"
+          ></div>
+        </div>
+      </div>
+      <div
+        class="grid"
+        :style="gridStyle"
+        :class="{ 'rotate-center': isOneColor }"
+      >
+        <div v-for="(col, i) of cells" :key="i">
+          <div
+            v-for="(row, j) of col"
+            :key="i - j"
+            class="box"
+            :style="{ backgroundColor: row.color, height: pixelSize }"
+            @mousedown="handleMouseDown(i, j)"
+            @mousemove="handleMouseMove(i, j)"
+            @click="handleMouseClick(i, j)"
+          ></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -78,6 +93,8 @@ export default defineComponent({
         "#FF4A1C",
         "#81523F",
         "#3F2A2B",
+        "#ced4da",
+        "#fff",
       ],
       cells: [] as Cell[][],
       currentColor: "",
@@ -109,11 +126,10 @@ export default defineComponent({
     },
 
     isOneColor() {
-      // TODO add check here
       const flatCells: Cell[] = this.cells.flat();
-      return flatCells.every(item => {
-        return item.color === flatCells[0].color && item.color !== "white"
-      })
+      return flatCells.every((item) => {
+        return item.color === flatCells[0].color && item.color !== "white";
+      });
     },
   },
 
@@ -197,16 +213,46 @@ export default defineComponent({
   padding: 10px;
 }
 
+.paint-container {
+  display: flex;
+  justify-content: center;
+}
+
 .color-picker-wrapper {
   display: flex;
   justify-content: center;
+  flex-direction: column;
   padding: 10px;
+  padding-right: 30px;
+  margin-bottom: 10px;
 }
 
 .color-box {
+  box-sizing: border-box;
+  border: 1px solid darkgrey;
   height: 30px;
   width: 30px;
   margin: 2px;
+}
+
+.flex-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 4px;
+}
+
+.align-left {
+  margin-right: auto;
+}
+
+.selected-color {
+  height: 40px;
+  width: 150px;
+  margin-right: 10px;
+  margin-left: 10px;
+  box-sizing: border-box;
+  border: 1px solid darkgrey;
 }
 
 .box-border {
@@ -218,18 +264,7 @@ export default defineComponent({
   border-width: 1px;
   border-color: #909aa3;
 }
-.box0 {
-  background-color: aquamarine;
-}
-.box1 {
-  background-color: #f34213;
-}
-.box2 {
-  background-color: whitesmoke;
-}
-.box3 {
-  background-color: plum;
-}
+
 .button {
   padding: 6px 25px;
   font-size: 16px;
@@ -259,11 +294,6 @@ export default defineComponent({
   clip: rect(0 0 0 0);
   color: transparent;
   user-select: none;
-  /* position: relative;
-    padding-left: 2.3em;
-    font-size: 1.05em;
-    line-height: 1.7;
-    cursor: pointer; */
 }
 .switch-label::before,
 .switch-label::after {
@@ -301,6 +331,14 @@ export default defineComponent({
 .rotate-center {
   -webkit-animation: rotate-center 0.6s ease-in-out both;
   animation: rotate-center 0.6s ease-in-out both;
+}
+
+/**
+handle smaller screen sizes
+*/
+@media screen and (max-width:990px) {
+  .paint-container { flex-wrap: wrap;  }
+  .color-picker-wrapper { flex-direction: row;}
 }
 
 /* ----------------------------------------------
