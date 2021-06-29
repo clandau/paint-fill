@@ -126,7 +126,6 @@ export default defineComponent({
     },
 
     isOneColor() {
-      // TODO add check here
       const flatCells: Cell[] = this.cells.flat();
       return flatCells.every((item) => {
         return item.color === flatCells[0].color && item.color !== "white";
@@ -164,6 +163,7 @@ export default defineComponent({
     },
     paintFill(x: number, y: number) {
       const currentVal = this.cells[x][y].color;
+      console.log(x, y, currentVal)
       if (currentVal === this.currentColor) return;
       // set currentVal to newColor
       this.cells[x][y].color = this.currentColor;
@@ -214,12 +214,9 @@ export default defineComponent({
   padding: 10px;
 }
 
-.main-container {
-}
-
 .paint-container {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .color-picker-wrapper {
@@ -227,6 +224,7 @@ export default defineComponent({
   justify-content: center;
   flex-direction: column;
   padding: 10px;
+  padding-right: 30px;
   margin-bottom: 10px;
 }
 
@@ -334,6 +332,14 @@ export default defineComponent({
 .rotate-center {
   -webkit-animation: rotate-center 0.6s ease-in-out both;
   animation: rotate-center 0.6s ease-in-out both;
+}
+
+/**
+handle smaller screen sizes
+*/
+@media screen and (max-width:990px) {
+  .paint-container { flex-wrap: wrap;  }
+  .color-picker-wrapper { flex-direction: row;}
 }
 
 /* ----------------------------------------------
