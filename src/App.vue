@@ -1,6 +1,6 @@
 <template>
 
-  <Grid msg="Color Fill" />
+  <Grid msg="Grid Paint" />
   <footer>A <a href="http://celandau.com" target="_blank">Courtney Landau</a> project. </footer>
 </template>
 
