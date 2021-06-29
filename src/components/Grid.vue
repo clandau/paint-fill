@@ -163,7 +163,6 @@ export default defineComponent({
     },
     paintFill(x: number, y: number) {
       const currentVal = this.cells[x][y].color;
-      console.log(x, y, currentVal)
       if (currentVal === this.currentColor) return;
       // set currentVal to newColor
       this.cells[x][y].color = this.currentColor;
